@@ -1,22 +1,16 @@
 from src.vector import Vector
 from src.similarity import euclidean_dis
 from src.storage import VectorStore
+from src.search import BruteForceSearch
+
 store = VectorStore()
 
-v1 = Vector([1, 2, 3])
-v2 = Vector([4, 5, 6])
+store.add(Vector([1, 2]))
+store.add(Vector([10, 10]))
+store.add(Vector([2, 3]))
 
-id1 = store.add(v1)
-id2 = store.add(v2)
+searcher = BruteForceSearch(store)
 
-print(id1)
-print(id2)
+print(searcher.search(Vector([10, 11])))
 
-print(store.get(id1).values)
-print(store.get(id2).values)
-
-print(store.count())
-print(store.get(999))
-
-print(euclidean_dis(v1,v2))
 
