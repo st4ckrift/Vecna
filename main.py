@@ -10,7 +10,6 @@ store.add(Vector([10, 10]))
 store.add(Vector([2, 3]))
 
 searcher = BruteForceSearch(store)
-
-print(searcher.search(Vector([10, 11])))
+print(searcher.search(Vector([1, 1]), 10))
 
 

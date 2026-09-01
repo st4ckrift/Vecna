@@ -4,12 +4,10 @@ class BruteForceSearch:
         self.store = store
         # should only set up the BruteForceSearch object.
 
-    def search(self, query):
-        dist = float("inf")
-        id = None
+    def search(self, query, k = 1):
+        dist_list = []
         for vector_id, vector in self.store.vectors.items():
             d = euclidean_dis(vector, query)
-            if d < dist:
-                dist = d
-                id = vector_id
-        return dist, id
+            dist_list.append((vector_id, d))
+        sorted_list = sorted(dist_list, key = lambda x: x[1])
+        return sorted_list[:k]
