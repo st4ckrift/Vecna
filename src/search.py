@@ -11,3 +11,16 @@ class BruteForceSearch:
             dist_list.append((vector_id, d))
         sorted_list = sorted(dist_list, key = lambda x: x[1])
         return sorted_list[:k]
+
+    def search_text(self, text, embedder, k=1):
+        query_vector = embedder.embed(text)
+        results = self.search(query_vector, k)
+        text_results = []
+        for vector_id, distance in results:
+            document = self.store.get_document(vector_id)
+            text_results.append((document, distance))
+        return text_results
+
+
+
+
