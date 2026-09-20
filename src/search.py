@@ -1,12 +1,20 @@
 from src.similarity import euclidean_dis
+from src.index import Index
 class BruteForceSearch:
-    def __init__(self, store):
+    def __init__(self, store, index = None):
         self.store = store
+        self.index = index
         # should only set up the BruteForceSearch object.
 
     def search(self, query, k = 1):
+        if self.index is not None:
+            candidates = self.index.candidates(query)
+        else:
+            candidates = list(self.store.vectors.keys())
+    
         dist_list = []
-        for vector_id, vector in self.store.vectors.items():
+        for vector_id in candidates:
+            vector = self.store.get(vector_id)
             d = euclidean_dis(vector, query)
             dist_list.append((vector_id, d))
         sorted_list = sorted(dist_list, key = lambda x: x[1])

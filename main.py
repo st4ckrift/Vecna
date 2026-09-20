@@ -2,7 +2,7 @@ from src.vector import Vector
 from src.storage import VectorStore
 from src.embedding import Embedder
 from src.search import BruteForceSearch
-
+from src.index import Index
 
 # Create embedder and store
 embedder = Embedder()
@@ -67,3 +67,12 @@ new_id = new_store.add(
 )
 
 print("\nNew vector ID:", new_id)
+
+index = Index(store)
+searcher = BruteForceSearch(store, index)
+
+print(searcher.search_text(
+    "programming with Python",
+    embedder,
+    k=2
+))
