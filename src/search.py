@@ -1,5 +1,4 @@
 from src.similarity import euclidean_dis
-from src.index import Index
 class BruteForceSearch:
     def __init__(self, store, index = None):
         self.store = store
@@ -15,6 +14,8 @@ class BruteForceSearch:
         dist_list = []
         for vector_id in candidates:
             vector = self.store.get(vector_id)
+            if vector is None:
+                continue
             d = euclidean_dis(vector, query)
             dist_list.append((vector_id, d))
         sorted_list = sorted(dist_list, key = lambda x: x[1])
@@ -28,7 +29,6 @@ class BruteForceSearch:
             document = self.store.get_document(vector_id)
             text_results.append((document, distance))
         return text_results
-
 
 
 
