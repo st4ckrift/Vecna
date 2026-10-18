@@ -6,10 +6,16 @@ class VectorStore:
         self.vectors = {}
         self.next_id = 1
         self.documents = {}
+        self.metadata = {}
 
-    def add(self, vector, text=None):
+    def add(self, vector, text=None, metadata=None):
+        if metadata is None:
+            metadata = {}
+        if not isinstance(metadata, dict):
+            raise TypeError("metadata must be a dictionary or None")
         self.vectors[self.next_id] = vector
         self.documents[self.next_id] = text
+        self.metadata[self.next_id] = metadata
         self.next_id += 1
         return self.next_id - 1
 
@@ -22,6 +28,9 @@ class VectorStore:
 
     def get_document(self, vector_id):
         return self.documents.get(vector_id, None)
+
+    def get_metadata(self, vector_id):
+        return self.metadata.get(vector_id, {})
     
     ## returns original text
     def save(self, filepath):
@@ -33,7 +42,8 @@ class VectorStore:
         data = {
             "next_id": self.next_id,
             "vectors": vectors,
-            "documents": self.documents
+            "documents": self.documents,
+            "metadata": self.metadata
         }
 
         with open(filepath, "w") as file:
@@ -47,6 +57,7 @@ class VectorStore:
 
         self.vectors = {}
         self.documents = {}
+        self.metadata = {}
 
         for vector_id, values in data["vectors"].items():
             vector_id = int(vector_id)
@@ -55,3 +66,10 @@ class VectorStore:
         for vector_id, document in data["documents"].items():
             vector_id = int(vector_id)
             self.documents[vector_id] = document
+
+        for vector_id, metadata in data.get("metadata", {}).items():
+            vector_id = int(vector_id)
+            self.metadata[vector_id] = metadata
+
+        for vector_id in self.vectors:
+            self.metadata.setdefault(vector_id, {})
