@@ -1,5 +1,10 @@
 # Educational Vector Search Engine
 
+[![Python](https://img.shields.io/badge/python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![Sentence Transformers](https://img.shields.io/badge/embeddings-Sentence--Transformers-FFB000)](https://www.sbert.net/)
+[![Tests](https://img.shields.io/badge/tests-pytest-0A9EDC?logo=pytest&logoColor=white)](https://pytest.org/)
+[![Status](https://img.shields.io/badge/status-educational%20project-6A5ACD)](#project-status)
+
 An educational Python vector search engine built incrementally across 13 phases. The project explores vector representations, text embeddings, storage, exact nearest-neighbor retrieval, approximate indexing, metadata filtering, persistence, and reproducible benchmarking.
 
 ## Features
@@ -13,6 +18,7 @@ An educational Python vector search engine built incrementally across 13 phases.
 - Exact-match metadata filtering with AND semantics.
 - High-level `VectorEngine` API for ingestion, search, and persistence.
 - Synthetic benchmarks for latency, throughput, index build time, and Recall@k.
+- Recursive directory ingestion through `vec.py`.
 
 ## Architecture
 
@@ -72,6 +78,22 @@ On Windows PowerShell, activate with:
 No repository URL is specified here because this local project does not declare one.
 
 ## Quick Start
+
+To ingest every UTF-8-readable file in a directory and search it interactively:
+
+```bash
+python vec.py folder1/
+```
+
+Run one query and optionally save the JSON store:
+
+```bash
+python vec.py folder1/ --index hnsw --query "how is authentication configured?" --save vectors.json
+```
+
+The CLI walks nested directories in deterministic path order, skips blank files,
+and records each file's relative path, extension, and size as metadata. Use
+`--index brute`, `--index lsh`, or `--index hnsw`; brute force is the default.
 
 The normal API uses the SentenceTransformer embedder:
 
@@ -160,6 +182,18 @@ The report uses the same deterministic synthetic dataset and queries for each st
 - Recall@k: overlap between approximate and exact top-k IDs, divided by the number of available exact results.
 
 Synthetic Gaussian vectors are useful for repeatable comparisons but do not represent every real embedding workload. Timing results vary by machine and Python runtime.
+
+Measured example (synthetic dataset: 1,000 vectors, 16 dimensions, 100 queries,
+`k=10`, seed 42; run on the development machine):
+
+| Strategy | Build time (ms) | Mean latency (ms) | Median latency (ms) | Throughput (q/s) | Recall@k |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Brute force | 0.000 | 9.602 | 9.292 | 104.2 | 1.000 |
+| LSH | 33.489 | 0.122 | 0.109 | 8,185.4 | 0.062 |
+| HNSW | 6,861.106 | 3.974 | 3.612 | 251.6 | 0.969 |
+
+These are illustrative measurements, not guarantees. The synthetic workload,
+Python runtime, machine, and ANN parameters materially affect the results.
 
 ## Testing
 
